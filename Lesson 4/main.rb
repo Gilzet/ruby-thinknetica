@@ -29,69 +29,57 @@ class RailRoad
       RailText.main_menu
       self.answer = gets.chomp.downcase
       case answer
-      when "1", "s" # show
-        loop do
-          RailText.show_menu
-          self.answer = gets.chomp.downcase
-          case answer
-          when "1", "a" # show all
-            puts info
-            self.answer = gets
-          when "2", "s" # show stations
-            puts stations
-            self.answer = gets
-          when "3", "r" # show routes
-            puts routes
-            self.answer = gets
-          when "4", "t" # show trains
-            puts trains
-            self.answer = gets
-          when "5", "w" # show wagons
-            puts wagons
-            self.answer = gets
-          when "0", "b" then break 0 # go back
-          else
-            RailText.error
-            self.answer = gets
-            break 0
-          end
-        end
-      when "2", "a"
-        loop do
-          RailText.add_new_menu
-          self.answer = gets.chomp.downcase
-          case answer
-          when "1", "s" then "add new station"
-          when "2", "r" then "add new route"
-          when "3", "t" then "add new train"
-          when "4", "w" then "add new wagon"
-          when "0", "b" then break 0
-          else
-            RailText.error
-            self.answer = gets.chomp.downcase
-            break 0
-          end
-        end
-      when "3", "l"
-        loop do
-          RailText.select_menu
-          self.answer = gets.chomp.downcase
-          case answer
-          when "1", "s" then "select station"
-          when "2", "r" then "select route"
-          when "3", "t" then "select train"
-          when "4", "w" then "select wagon"
-          when "0", "b" then break 0
-          else
-            RailText.error
-            self.answer = gets.chomp.downcase
-            break 0
-          end
-        end
-      when "0", "e" then break 0
-      else
-        RailText.error
-        self.answer = gets.chomp.downcase
+      when "1", "s", "show" then show_menu
+      when "2", "a", "add" then add_new_menu
+      when "3", "l", "select" then select_menu
+      when "0", "e", "exit" then break 0
+      else RailText.error; self.answer = gets
+      end
+    end
+  end
+
+  def show_menu
+    loop do
+      RailText.show_menu
+      self.answer = gets.chomp.downcase
+      case answer
+      when "1", "a", "all" then RailText.showing("All", info); self.answer = gets
+      when "2", "s", "stations" then RailText.showing("Stations", stations); self.answer = gets
+      when "3", "r", "routes" then RailText.showing("Routes", routes); self.answer = gets
+      when "4", "t", "trains" then RailText.showing("Trains", trains); self.answer = gets
+      when "5", "w", "wagons" then RailText.showing("Wagons", wagons); self.answer = gets
+      when "0", "b", "back" then break 0
+      else RailText.error; self.answer = gets; break 0
+      end
+    end
+  end
+
+  def add_new_menu
+    loop do
+      RailText.add_new_menu
+      self.answer = gets.chomp.downcase
+      case answer
+      when "1", "s", "station" then "add new station"
+      when "2", "r", "route" then "add new route"
+      when "3", "t", "train" then "add new train"
+      when "4", "w", "wagon" then "add new wagon"
+      when "0", "b", "back" then break 0
+      else RailText.error; self.answer = gets; break 0
+      end
+    end
+  end
+
+  def select_menu
+    loop do
+      RailText.select_menu
+      self.answer = gets.chomp.downcase
+      case answer
+      when "1", "s", "station" then "select station"
+      when "2", "r", "route" then "select route"
+      when "3", "t", "train" then "select train"
+      when "4", "w", "wagon" then "select wagon"
+      when "0", "b", "back" then break 0
+      else RailText.error; self.answer = gets; break 0
       end
     end
   end

@@ -82,7 +82,7 @@ module RailText
       1. (C)argo
       2. (P)assenger
     
-      0. Cancel, back to main menu
+      0. Cancel, (B)ack to main menu
     TXT
   end
 
@@ -94,7 +94,7 @@ module RailText
       1. (C)argo
       2. (P)assenger
       
-      0. Cancel, back to main menu
+      0. Cancel, (B)ack to main menu
     TXT
   end
 
@@ -194,7 +194,7 @@ module RailText
       ====================
        #{item_title} removed
       ====================
-      Back to main menu ->
+      Back ->
     TXT
   end
 
@@ -203,7 +203,7 @@ module RailText
       ====================
        #{item_title} added
       ====================
-      Back to main menu ->
+      Back ->
     TXT
   end
 
@@ -212,7 +212,7 @@ module RailText
       ========================
        New #{item_title} added
       ========================
-      Back to main menu ->
+      Back ->
     TXT
   end
 
@@ -221,7 +221,7 @@ module RailText
     ======================
      Something went wrong
     ======================
-    Back to main menu ->
+    Back ->
     TXT
   end
 end

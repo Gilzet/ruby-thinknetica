@@ -148,7 +148,7 @@ module RailText
       3. (R)emove wagon
       4. (A)ssign a route
       5. Go to (N)ext station
-      5. Go to (P)revious station
+      6. Go to (P)revious station
       
       0. (B)ack"
     TXT
@@ -172,7 +172,7 @@ module RailText
        Select #{item_title} number, starting from 1
       ==============================================
       
-      #{items}
+      #{items || "None"}
       
       0. (B)ack
     TXT
@@ -183,13 +183,13 @@ module RailText
       ============
        #{items_title}
       ============
-      #{items}
+      #{items || "None"}
       
       Back ->
     TXT
   end
 
-  def self.after_delete(item_title)
+  def self.success_delete(item_title)
     puts <<~TXT
       ====================
        #{item_title} removed
@@ -198,7 +198,7 @@ module RailText
     TXT
   end
 
-  def self.after_add(item_title)
+  def self.success_add(item_title)
     puts <<~TXT
       ====================
        #{item_title} added
@@ -207,7 +207,7 @@ module RailText
     TXT
   end
 
-  def self.after_add_new(item_title)
+  def self.success_add_new(item_title)
     puts <<~TXT
       ========================
        New #{item_title} added

@@ -11,6 +11,9 @@ require_relative 'wagon_pass'
 require_relative 'rail_text'
 
 class RailRoad
+  CARGO_TYPE = :cargo
+  PASS_TYPE = :pass
+
   include RailText
   attr_reader :stations, :routes, :trains, :wagons
 
@@ -27,13 +30,14 @@ class RailRoad
   def main_menu
     loop do
       RailText.main_menu
-      answer = gets.chomp.downcase
-      case answer
+      action = gets.chomp.downcase
+
+      case action
       when "1", "s", "show" then show_menu
       when "2", "a", "add" then add_new_menu
       when "3", "l", "select" then select_menu
-      when "0", "e", "exit" then break 0
-      else RailText.error; answer = gets
+      when "0", "e", "exit" then exit 0
+      else raise_error
       end
     end
   end
@@ -41,15 +45,16 @@ class RailRoad
   def show_menu
     loop do
       RailText.show_menu
-      answer = gets.chomp.downcase
-      case answer
-      when "1", "a", "all" then RailText.showing("All", info); self.answer = gets
-      when "2", "s", "stations" then RailText.showing("Stations", stations); self.answer = gets
-      when "3", "r", "routes" then RailText.showing("Routes", routes); self.answer = gets
-      when "4", "t", "trains" then RailText.showing("Trains", trains); self.answer = gets
-      when "5", "w", "wagons" then RailText.showing("Wagons", wagons); self.answer = gets
+      action = gets.chomp.downcase
+
+      case action
+      when "1", "a", "all" then showing_items("All", info)
+      when "2", "s", "stations" then showing_items("Stations", stations)
+      when "3", "r", "routes" then showing_items("Routes", routes)
+      when "4", "t", "trains" then showing_items("Trains", trains)
+      when "5", "w", "wagons" then showing_items("Wagons", wagons)
       when "0", "b", "back" then break 0
-      else RailText.error; answer = gets; break 0
+      else raise_error; break 0
       end
     end
   end
@@ -57,14 +62,15 @@ class RailRoad
   def add_new_menu
     loop do
       RailText.add_new_menu
-      answer = gets.chomp.downcase
-      case answer
+      action = gets.chomp.downcase
+
+      case action
       when "1", "s", "station" then add_new_station
       when "2", "r", "route" then add_new_route
       when "3", "t", "train" then add_new_train
       when "4", "w", "wagon" then add_new_wagon
       when "0", "b", "back" then break 0
-      else RailText.error; answer = gets; break 0
+      else raise_error; break 0
       end
     end
   end
@@ -72,72 +78,149 @@ class RailRoad
   def select_menu
     loop do
       RailText.select_menu
-      answer = gets.chomp.downcase
-      case answer
-      when "1", "s", "station" then select_station
-      when "2", "r", "route" then select_route
-      when "3", "t", "train" then select_train
-      when "4", "w", "wagon" then select_wagon
+      action = gets.chomp.downcase
+
+      case action
+      when "1", "s", "station" then station_menu(select_item("station", stations))
+      when "2", "r", "route" then route_menu(select_item("route", routes))
+      when "3", "t", "train" then train_menu(select_item("train", trains))
+      when "4", "w", "wagon" then wagon_menu(select_item("wagon", wagons))
       when "0", "b", "back" then break 0
-      else RailText.error; answer = gets; break 0
+      else raise_error; break 0
       end
     end
   end
 
   def add_new_station
     RailText.add_new_station_name
-    answer = gets.chomp.capitalize
-    add_station(Station.new(answer))
-    RailText.after_add_new("station")
-    answer = gets
+    station_name = gets.chomp.capitalize
+
+    add_station(Station.new(station_name))
+
+    RailText.success_add_new("station")
+    wait_any_input
   end
 
   def add_new_route
     RailText.add_new_route
-    RailText.select_list_menu("Start station", stations)
-    answer = gets.chomp.to_i; return if answer.zero? || answer.nil?
-    RailText.select_list_menu("Last station", stations)
-    second_answer = gets.chomp.to_i; return if second_answer.zero? || second_answer.nil?
-    add_route(Route.new(stations[answer-1], stations[second_answer-1]))
-    RailText.after_add_new("route"); answer = gets
+
+    start_station = select_item("Start station", stations)
+    end_station = select_item("End station", stations)
+
+    raise_error; return if start_station.nil? || end_station.nil?
+
+    add_route(Route.new(start_station, end_station))
+
+    RailText.success_add_new("route")
+    wait_any_input
   end
 
   def add_new_train
     RailText.add_new_train_number
-    answer = gets.chomp.to_i; return if answer.zero? || answer.nil?
+    train_number = gets.chomp.to_i; return if train_number.zero? || train_number.nil?
+
     RailText.add_new_train_type
-    second_answer = gets.chomp.downcase
-    case second_answer
-    when "1", "c", "cargo" then add_train(TrainCargo.new(answer))
-    when "2", "p", "passenger" then add_train(TrainPass.new(answer))
+    train_type = gets.chomp.downcase
+
+    case train_type
+    when "1", "c", "cargo" then add_train(TrainCargo.new(train_number))
+    when "2", "p", "passenger" then add_train(TrainPass.new(train_number))
     when "0", "b", "back" then return
-    else RailText.error; self.answer = gets; return
+    else raise_error; return
     end
-    RailText.after_add_new("train"); answer = gets
+
+    RailText.success_add_new("train")
+    wait_any_input
   end
 
   def add_new_wagon
     RailText.add_new_wagon_type
-    answer = gets.chomp.downcase
-    case answer
+    wagon_type = gets.chomp.downcase
+
+    case wagon_type
     when "1", "c", "cargo" then add_wagon(WagonCargo.new)
     when "2", "p", "passenger" then add_wagon(WagonPass.new)
     when "0", "b", "back" then return
-    else RailText.error; self.answer = gets; return
+    else raise_error; return
     end
-    RailText.after_add_new("wagon"); answer = gets
+
+    RailText.success_add_new("wagon")
+    wait_any_input
   end
 
-  def select_station
+  def select_item(item_title, items)
+    RailText.select_list_menu(item_title, items)
+    index = gets.chomp.to_i - 1
+
+    return nil if index == -1
+
+    items[index] || raise_error
   end
 
-  def select_route
+  def station_menu(station)
+    return if station.nil?
+    loop do
+      RailText.station_menu(station)
+      action = gets.chomp.downcase
+
+      case action
+      when "1", "a", "all" then showing_items("All trains", station.show_trains)
+      when "2", "c", "cargo" then showing_items("Cargo trains", station.show_trains(CARGO_TYPE))
+      when "3", "p", "passenger" then showing_items("Passenger trains", station.show_trains(PASS_TYPE))
+      when "0", "b", "back" then break 0
+      else raise_error; break 0
+      end
+    end
   end
 
-  def select_train
+  def route_menu(route)
+    return if route.nil?
+    loop do
+      RailText.route_menu(route)
+      action = gets.chomp.downcase
+
+      case action
+      when "1", "s", "show" then showing_items("Route stations", route.stations)
+      when "2", "a", "add" then route.add_station(select_item("station", stations - route.stations))
+      when "3", "r", "remove" then route.remove_way_station(select_item("way station", route.way_stations))
+      when "0", "b", "back" then break 0
+      else raise_error; break 0
+      end
+    end
   end
 
-  def select_wagon
+  def train_menu(train)
+    return if train.nil?
+    loop do
+      RailText.train_menu(train)
+      action = gets.chomp.downcase
+
+      case action
+      when "1", "s", "show" then showing_items("Wagons", train.wagons)
+      when "2", "w", "wagon" then train.add_wagon(select_item("wagon", wagons.map{|wagon| wagon.type == train.type} - train.wagons))
+      when "3", "r", "remove" then train.remove_wagon(select_item("wagon", train.wagons))
+      when "4", "a", "assign" then train.route = select_item("route", routes)
+      when "5", "n", "next" then train.go_next_station unless train.route.nil?
+      when "6", "p", "previous" then train.go_prev_station unless train.route.nil?
+      when "0", "b", "back" then break 0
+      else raise_error; break 0
+      end
+    end
+  end
+
+  def wagon_menu(wagon)
+    return if wagon.nil?
+    loop do
+      RailText.wagon_menu(wagon)
+      action = gets.chomp.downcase
+
+      case action
+      when "1", "t", "type" then showing_items("Type", wagon.type)
+      when "2", "s", "train" then showing_items("Train", wagon.train)
+      when "0", "b", "back" then break 0
+      else raise_error; break 0
+      end
+    end
   end
 
   def info
@@ -152,6 +235,22 @@ class RailRoad
   private
 
   attr_accessor :answer, :second_answer
+
+  def wait_any_input
+    gets
+    nil
+  end
+
+  def raise_error
+    RailText.error
+    wait_any_input
+    nil
+  end
+
+  def showing_items(item_title, items)
+    RailText.showing(item_title, items)
+    wait_any_input
+  end
 
   def add_station!(station) stations << station end
   def add_route!(route) routes << route end

@@ -11,6 +11,10 @@ class Wagon
     set_train!(train) if train.wagons.include?(self)
   end
 
+  def reset_train
+    set_train!(nil)
+  end
+
   protected
 
   attr_writer :train

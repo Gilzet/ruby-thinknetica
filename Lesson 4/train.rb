@@ -21,8 +21,8 @@ class Train
     add_wagon!(wagon) if speed.zero? && !wagons.include?(wagon)
   end
 
-  def remove_wagon
-    remove_wagon! if speed.zero? && !wagons.empty?
+  def remove_wagon(wagon)
+    remove_wagon!(wagon) if speed.zero? && wagons.include?(wagon)
   end
 
   def route=(route)
@@ -68,11 +68,14 @@ class Train
     wagon.set_train(self)
   end
 
-  def remove_wagon!
-    wagons.pop
+  def remove_wagon!(wagon)
+    wagons.delete(wagon)
+    wagon.reset_train
   end
 
   def set_route=(route)
+    return if route.nil?
+
     route.delete(self) unless self.route.nil?
     self.route = route
     route.add_train(self)

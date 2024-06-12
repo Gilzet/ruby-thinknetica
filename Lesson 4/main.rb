@@ -257,5 +257,3 @@ class RailRoad
   def add_train!(train) trains << train end
   def add_wagon!(wagon) wagons << wagon end
 end
-
-new_road = RailRoad.new

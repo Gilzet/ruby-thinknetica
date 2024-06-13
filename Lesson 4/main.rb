@@ -107,7 +107,7 @@ class RailRoad
     start_station = select_item("Start station", stations)
     end_station = select_item("End station", stations)
 
-    raise_error; return if start_station.nil? || end_station.nil?
+    (raise_error; return) if start_station.nil? || end_station.nil?
 
     add_route(Route.new(start_station, end_station))
 

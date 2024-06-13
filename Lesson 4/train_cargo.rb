@@ -7,8 +7,4 @@ class TrainCargo < Train
     super
     @type = CARGO_TYPE
   end
-
-  def add_wagon(wagon)
-    super if wagon.type == CARGO_TYPE
-  end
 end

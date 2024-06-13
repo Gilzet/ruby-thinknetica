@@ -7,8 +7,4 @@ class TrainPass < Train
     super
     @type = PASS_TYPE
   end
-
-  def add_wagon(wagon)
-    super if wagon.type == PASS_TYPE
-  end
 end

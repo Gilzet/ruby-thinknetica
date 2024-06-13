@@ -197,7 +197,7 @@ class RailRoad
 
       case action
       when "1", "s", "show" then showing_items("Wagons", train.wagons)
-      when "2", "w", "wagon" then train.add_wagon(select_item("wagon", wagons.map{|wagon| wagon.type == train.type} - train.wagons))
+      when "2", "w", "wagon" then train.add_wagon(select_item("wagon", wagons - train.wagons))
       when "3", "r", "remove" then train.remove_wagon(select_item("wagon", train.wagons))
       when "4", "a", "assign" then train.route = select_item("route", routes)
       when "5", "n", "next" then train.go_next_station unless train.route.nil?

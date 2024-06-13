@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 class Train
+  TRAIN_TYPES = %i[cargo pass]
   attr_reader :number, :type, :speed, :wagons, :route, :station, :station_number
 
-  def initialize(number)
+  def initialize(number, type=nil)
     @number = number
     @speed = 0
     @wagons = []
+    @type = type if TRAIN_TYPES.include?(type)
   end
 
   def speed_up(additional_speed = DEFAULT_ADDITIONAL_SPEED)
@@ -18,7 +20,10 @@ class Train
   end
 
   def add_wagon(wagon)
-    add_wagon!(wagon) if speed.zero? && !wagons.include?(wagon)
+    raise "Add wagon failed, type mismatch #{wagon.type} and #{type}" if wagon.type != type
+    raise "Add wagon failed, train is moving. Current speed = #{speed}" unless speed.zero?
+    raise "Add wagon failed, #{wagon} is already attached" if wagons.include?(wagon)
+    add_wagon!(wagon)
   end
 
   def remove_wagon(wagon)

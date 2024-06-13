@@ -134,7 +134,7 @@ module RailText
       2. (A)dd way station
       3. (R)emove way station
       
-      0. (B)ack"
+      0. (B)ack
     TXT
   end
 
@@ -150,7 +150,7 @@ module RailText
       5. Go to (N)ext station
       6. Go to (P)revious station
       
-      0. (B)ack"
+      0. (B)ack
     TXT
   end
 
@@ -172,7 +172,7 @@ module RailText
        Select #{item_title} number, starting from 1
       ==============================================
       
-      #{items || "None"}
+      #{items.empty? ? "None" : items}
       
       0. (B)ack
     TXT
@@ -183,7 +183,7 @@ module RailText
       ============
        #{items_title}
       ============
-      #{items || "None"}
+      #{items.empty? ? "None" : items}
       
       Back ->
     TXT

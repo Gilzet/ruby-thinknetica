@@ -1,11 +1,21 @@
 # frozen_string_literal: true
 
 class Station
+  include InstanceCounter
+
+  @all = []
+
+  class << self
+    attr_reader :all
+  end
+
   attr_reader :name, :trains
 
   def initialize(name)
     @name = name
     @trains = []
+    self.class.all << self
+    register_instance
   end
 
   def show_trains(type=nil)

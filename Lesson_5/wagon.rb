@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Wagon
+  include Vendor
+
   attr_reader :type, :train
 
   def initialize(type)

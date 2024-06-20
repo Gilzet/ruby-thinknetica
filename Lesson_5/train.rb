@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
 class Train
+  include Vendor
+  include InstanceCounter
+
+  @@all = []
+
+  class << self
+    def find(number)
+      @@all.find{|train| train.number == number}
+    end
+  end
+
   TRAIN_TYPES = %i[cargo pass]
   attr_reader :number, :type, :speed, :wagons, :route, :station, :station_number
 
@@ -9,6 +20,8 @@ class Train
     @speed = 0
     @wagons = []
     @type = type if TRAIN_TYPES.include?(type)
+    @@all << self
+    register_instance
   end
 
   def speed_up(additional_speed = DEFAULT_ADDITIONAL_SPEED)

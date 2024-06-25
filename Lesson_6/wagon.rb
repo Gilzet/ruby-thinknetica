@@ -35,7 +35,7 @@ class Wagon
   end
 
   def validate!
-    raise "Type can't be nil" if type.nil?
-    raise "Type should be cargo OR passenger" unless WAGON_TYPES.include?(type)
+    raise "ERROR: Type can't be nil" if type.nil?
+    raise "ERROR: Type should be cargo OR passenger" unless WAGON_TYPES.include?(type)
   end
 end

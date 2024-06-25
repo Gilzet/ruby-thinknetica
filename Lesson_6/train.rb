@@ -127,11 +127,11 @@ class Train
   end
 
   def validate!
-    raise "Number can't be nil" if number.nil?
-    raise "Number should be at least 5 symbols" if number.to_s.length < 5
-    raise "Number should have format: xxx-xx OR xxxxx" if number !~ NUMBER_FORMAT
+    raise "ERROR: Number can't be nil" if number.nil?
+    raise "ERROR: Number should be at least 5 symbols" if number.to_s.length < 5
+    raise "ERROR: Number should have format: xxx-xx OR xxxxx" if number !~ NUMBER_FORMAT
 
-    raise "Type can't be nil" if type.nil?
-    raise "Type should be cargo OR passenger" unless TRAIN_TYPES.include?(type)
+    raise "ERROR: Type can't be nil" if type.nil?
+    raise "ERROR: Type should be cargo OR passenger" unless TRAIN_TYPES.include?(type)
   end
 end

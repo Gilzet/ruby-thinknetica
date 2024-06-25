@@ -11,7 +11,7 @@ module InstanceCounter
       @instances ||= 0
     end
 
-    attr_reader :instances
+    attr_writer :instances
   end
 
   module InstanceMethods

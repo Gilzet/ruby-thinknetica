@@ -42,8 +42,8 @@ class Station
   private
 
   def validate!
-    raise "Name can't be nil" if name.nil?
-    raise "Name should be at least 3 symbols" if name.length < 3
+    raise "ERROR: Name can't be nil" if name.nil?
+    raise "ERROR: Name should be at least 3 symbols" if name.length < 3
   end
 
   def particular_trains(type)

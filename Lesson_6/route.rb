@@ -59,7 +59,7 @@ class Route
   end
 
   def validate!
-    raise "Start station can't be nil" if start_station.nil?
-    raise "End station can't be nil" if end_station.nil?
+    raise "ERROR: Start station can't be nil" if start_station.nil?
+    raise "ERROR: End station can't be nil" if end_station.nil?
   end
 end

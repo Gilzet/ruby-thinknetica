@@ -6,7 +6,8 @@ class Route
   attr_reader :start_station, :end_station, :way_stations, :trains
 
   def initialize(start_station, end_station)
-    @start_station, @end_station = start_station, end_station
+    @start_station = start_station
+    @end_station = end_station
     @way_stations = []
     @trains = []
     validate!
@@ -36,11 +37,11 @@ class Route
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
-private
+  private
 
   def add_station!(way_station)
     way_stations << way_station
@@ -59,7 +60,7 @@ private
   end
 
   def validate!
-    raise "ERROR: Start station can't be nil" if start_station.nil?
-    raise "ERROR: End station can't be nil" if end_station.nil?
+    raise ArgumentError, "ERROR: Start station can't be nil" if start_station.nil?
+    raise ArgumentError, "ERROR: End station can't be nil" if end_station.nil?
   end
 end

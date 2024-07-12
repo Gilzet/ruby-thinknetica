@@ -1,21 +1,20 @@
 # frozen_string_literal: true
 
-require_relative 'instance_counter'
-require_relative 'vendor'
-
 class Train
-  include Vendor
   include InstanceCounter
+  include Vendor
 
-  @@all = []
+  @all ||= []
 
   class << self
+    attr_reader :all
+
     def find(number)
-      @@all.find { |train| train.number == number }
+      @all.find { |train| train.number == number }
     end
   end
 
-  TRAIN_TYPES = %i[cargo pass]
+  TRAIN_TYPES = %i[cargo pass].freeze
   attr_reader :number, :type, :speed, :wagons, :route, :station, :station_number
 
   def initialize(number, type = nil)
@@ -23,7 +22,7 @@ class Train
     @speed = 0
     @wagons = []
     @type = type unless type.nil?
-    @@all << self
+    @all << self
     validate!
     register_instance
   end
@@ -37,9 +36,10 @@ class Train
   end
 
   def add_wagon(wagon)
-    raise "Add wagon failed, type mismatch #{wagon.type} and #{type}" if wagon.type != type
-    raise "Add wagon failed, train is moving. Current speed = #{speed}" unless speed.zero?
-    raise "Add wagon failed, #{wagon} is already attached" if wagons.include?(wagon)
+    raise ArgumentError, "Add wagon failed, type mismatch #{wagon.type} and #{type}" if wagon.type != type
+    raise ArgumentError, "Add wagon failed, train is moving. Current speed = #{speed}" unless speed.zero?
+    raise ArgumentError, "Add wagon failed, #{wagon} is already attached" if wagons.include?(wagon)
+
     add_wagon!(wagon)
   end
 
@@ -47,8 +47,14 @@ class Train
     remove_wagon!(wagon) if speed.zero? && wagons.include?(wagon)
   end
 
-  def set_route=(route)
-    self.route = route
+  def route=(route)
+    return if route.nil?
+
+    self.route&.remove_train(self)
+    @route = route
+    route.add_train(self)
+    self.station_number = START_STATION_NUMBER
+    move_to_new_station!
   end
 
   def go_next_station
@@ -74,20 +80,20 @@ class Train
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
   def each_wagon(&block)
-    wagons.each_with_index { |wagon, index| yield(wagon, index) }
+    wagons.each_with_index(&block)
     nil
   end
 
-protected
+  protected
 
   START_STATION_NUMBER = 0
   DEFAULT_ADDITIONAL_SPEED = 10
-  NUMBER_FORMAT = /^\p{Alnum}{3}-?\p{Alnum}{2}$/i
+  NUMBER_FORMAT = /^\p{Alnum}{3}-?\p{Alnum}{2}$/i.freeze
   attr_writer :speed, :station, :station_number
 
   def speed_up!(additional_speed)
@@ -100,22 +106,12 @@ protected
 
   def add_wagon!(wagon)
     wagons << wagon
-    wagon.set_train(self)
+    wagon.train = self
   end
 
   def remove_wagon!(wagon)
     wagons.delete(wagon)
     wagon.reset_train
-  end
-
-  def route=(route)
-    return if route.nil?
-
-    route.delete(self) unless self.route.nil?
-    @route = route
-    route.add_train(self)
-    self.station_number = START_STATION_NUMBER
-    move_to_new_station!
   end
 
   def go_next_station!
@@ -129,17 +125,17 @@ protected
   end
 
   def move_to_new_station!
-    station.send_train(self) unless station.nil?
+    station&.send_train(self)
     self.station = route.stations[station_number]
     station.take_train(self)
   end
 
   def validate!
-    raise "ERROR: Number can't be nil" if number.nil?
-    raise "ERROR: Number should be at least 5 symbols" if number.to_s.length < 5
-    raise "ERROR: Number should have format: xxx-xx OR xxxxx" if number !~ NUMBER_FORMAT
+    raise ArgumentError, "ERROR: Number can't be nil" if number.nil?
+    raise ArgumentError, 'ERROR: Number should be at least 5 symbols' if number.to_s.length < 5
+    raise ArgumentError, 'ERROR: Number should have format: xxx-xx OR xxxxx' if number !~ NUMBER_FORMAT
 
-    raise "ERROR: Type can't be nil" if type.nil?
-    raise "ERROR: Type should be cargo OR passenger" unless TRAIN_TYPES.include?(type)
+    raise ArgumentError, "ERROR: Type can't be nil" if type.nil?
+    raise ArgumentError, 'ERROR: Type should be cargo OR passenger' unless TRAIN_TYPES.include?(type)
   end
 end

@@ -20,12 +20,13 @@ class Station
   end
 
   def each_train(&block)
-    trains.each_with_index { |train, index| yield(train, index) }
+    trains.each_with_index(&block)
     nil
   end
 
   def show_trains(type = nil)
     return trains if type.nil?
+
     particular_trains(type)
   end
 
@@ -40,19 +41,19 @@ class Station
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
-private
+  private
 
   def validate!
-    raise "ERROR: Name can't be nil" if name.nil?
-    raise "ERROR: Name should be at least 3 symbols" if name.length < 3
+    raise ArgumentError, "ERROR: Name can't be nil" if name.nil?
+    raise ArgumentError, 'ERROR: Name should be at least 3 symbols' if name.length < 3
   end
 
   def particular_trains(type)
-    self.trains.select { |train| train.type == type }
+    trains.select { |train| train.type == type }
   end
 
   def take_train!(train)

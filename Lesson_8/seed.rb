@@ -39,18 +39,19 @@ module Seed
     t4.add_wagon(w7)
     t4.add_wagon(w8)
 
-    t1.set_route = r1
-    t2.set_route = r2
-    t3.set_route = r1
-    t4.set_route = r2
+    t1.route = r1
+    t2.route = r2
+    t3.route = r1
+    t4.route = r2
 
-    t1.go_next_station; t1.go_next_station
+    t1.go_next_station
+    t1.go_next_station
     t4.go_next_station
 
-    5.times {w1.reserve_seat}
-    10.times {w2.reserve_seat}
-    20.times {w3.reserve_seat}
-    50.times {w4.reserve_seat}
+    5.times { w1.reserve_seat }
+    10.times { w2.reserve_seat }
+    20.times { w3.reserve_seat }
+    50.times { w4.reserve_seat }
 
     { stations: [s1, s2, s3, s4, s5],
       routes: [r1, r2],

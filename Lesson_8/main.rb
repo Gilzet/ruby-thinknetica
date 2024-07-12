@@ -383,5 +383,3 @@ class RailRoad
     wagons << wagon
   end
 end
-
-RailRoad.new

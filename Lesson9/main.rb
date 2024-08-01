@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 class RailRoad
+  require_relative 'validation'
+  require_relative 'accessors'
   require_relative 'instance_counter'
   require_relative 'vendor'
   require_relative 'seed'
-  require_relative 'route'
   require_relative 'station'
+  require_relative 'route'
   require_relative 'train'
   require_relative 'train_cargo'
   require_relative 'train_pass'

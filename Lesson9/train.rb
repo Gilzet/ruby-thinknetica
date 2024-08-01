@@ -5,16 +5,6 @@ class Train
   include Validation
   extend Accessors
 
-  @all ||= []
-
-  class << self
-    attr_reader :all
-
-    def find(number)
-      @all.find { |train| train.number == number }
-    end
-  end
-
   TRAIN_TYPES = %i[cargo pass].freeze
   attr_reader :type, :speed, :wagons, :route, :station, :station_number
 
@@ -29,7 +19,6 @@ class Train
     @speed = 0
     @wagons = []
     @type = type unless type.nil?
-    @all << self
     validate!
     register_instance
   end

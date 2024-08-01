@@ -45,7 +45,7 @@ class RailRoad
       when '2', 'a', 'add' then add_new_menu
       when '3', 'l', 'select' then select_menu
       when '0', 'e', 'exit' then return
-      else raise_error
+      else show_error
       end
     end
   end
@@ -62,7 +62,7 @@ class RailRoad
       when '4', 't', 'trains' then showing_items('Trains', trains)
       when '5', 'w', 'wagons' then showing_items('Wagons', wagons)
       when '0', 'b', 'back' then break 0
-      else raise_error
+      else show_error
            break 0
       end
     end
@@ -79,7 +79,7 @@ class RailRoad
       when '3', 't', 'train' then add_new_train
       when '4', 'w', 'wagon' then add_new_wagon
       when '0', 'b', 'back' then break 0
-      else raise_error
+      else show_error
            break 0
       end
     end
@@ -96,7 +96,7 @@ class RailRoad
       when '3', 't', 'train' then train_menu(select_item('train', trains))
       when '4', 'w', 'wagon' then wagon_menu(select_item('wagon', wagons))
       when '0', 'b', 'back' then break 0
-      else raise_error
+      else show_error
            break 0
       end
     end
@@ -109,8 +109,8 @@ class RailRoad
       return if station_name == '0'
 
       add_station(Station.new(station_name))
-    rescue RuntimeError => e
-      puts e
+    rescue ArgumentError => e
+      show_error(e)
       retry
     end
 
@@ -126,8 +126,8 @@ class RailRoad
       end_station = select_item('End station', stations)
 
       add_route(Route.new(start_station, end_station))
-    rescue RuntimeError => e
-      puts e
+    rescue ArgumentError => e
+      show_error(e)
       return
     end
 
@@ -150,8 +150,8 @@ class RailRoad
       when '2', 'p', 'passenger' then add_train(TrainPass.new(train_number))
       else add_train(Train.new(train_number, train_type))
       end
-    rescue RuntimeError => e
-      puts e
+    rescue ArgumentError => e
+      show_error(e)
       retry
     end
 
@@ -177,8 +177,8 @@ class RailRoad
       else
         add_wagon(Wagon.new(wagon_type))
       end
-    rescue RuntimeError => e
-      puts e
+    rescue ArgumentError => e
+      show_error(e)
       retry
     end
 
@@ -192,7 +192,7 @@ class RailRoad
 
     return nil if index == -1
 
-    items[index] || raise_error
+    items[index] || show_error
   end
 
   def station_menu(station)
@@ -221,7 +221,7 @@ class RailRoad
         showing_items('Passenger trains', items)
       when '0', 'b', 'back' then break 0
       else
-        raise_error
+        show_error
         break 0
       end
     end
@@ -239,7 +239,7 @@ class RailRoad
       when '2', 'a', 'add' then route.add_station(select_item('station', stations - route.stations))
       when '3', 'r', 'remove' then route.remove_way_station(select_item('way station', route.way_stations))
       when '0', 'b', 'back' then break 0
-      else raise_error
+      else show_error
            break 0
       end
     end
@@ -268,7 +268,7 @@ class RailRoad
       when '6', 'p', 'previous' then train.go_prev_station unless train.route.nil?
       when '0', 'b', 'back' then break 0
       else
-        raise_error
+        show_error
         break 0
       end
     end
@@ -293,7 +293,7 @@ class RailRoad
       when '2', 'r', 'reserve' then show_message(wagon.reserve_seat)
       when '0', 'b', 'back' then break 0
       else
-        raise_error
+        show_error
         break 0
       end
     end
@@ -314,7 +314,7 @@ class RailRoad
         show_message(wagon.load_cargo(load_volume))
       when '0', 'b', 'back' then break 0
       else
-        raise_error
+        show_error
         break 0
       end
     end
@@ -362,7 +362,7 @@ class RailRoad
     nil
   end
 
-  alias raise_error show_message
+  alias show_error show_message
 
   def showing_items(item_title, items)
     RailText.showing(item_title, items)

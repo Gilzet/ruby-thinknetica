@@ -2,8 +2,14 @@
 
 class Route
   include InstanceCounter
+  include Validation
 
   attr_reader :start_station, :end_station, :way_stations, :trains
+
+  validate :start_station, :presence
+  validate :start_station, :type, Station
+  validate :end_station, :presence
+  validate :end_station, :type, Station
 
   def initialize(start_station, end_station)
     @start_station = start_station
@@ -34,13 +40,6 @@ class Route
     remove_train!(train) if trains.include?(train)
   end
 
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
-  end
-
   private
 
   def add_station!(way_station)
@@ -57,10 +56,5 @@ class Route
 
   def remove_train!(train)
     trains.delete(train)
-  end
-
-  def validate!
-    raise ArgumentError, "ERROR: Start station can't be nil" if start_station.nil?
-    raise ArgumentError, "ERROR: End station can't be nil" if end_station.nil?
   end
 end

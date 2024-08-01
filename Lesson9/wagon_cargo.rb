@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
 class WagonCargo < Wagon
+  include Validation
+
   CARGO_TYPE = :cargo
   LOADED = 'Cargo loaded!'
   NOT_LOADED = 'Cargo is too big to load!'
   attr_reader :volume, :occupied_volume
+
+  validate :volume, :presence
 
   def initialize(volume)
     @type = CARGO_TYPE
@@ -29,10 +33,4 @@ class WagonCargo < Wagon
   private
 
   attr_writer :occupied_volume
-
-  def validate!
-    super
-    raise ArgumentError, "ERROR: Volume can't be nil" if volume.nil?
-    raise ArgumentError, 'ERROR: Volume should be at least 1' if volume < 1
-  end
 end

@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
 class WagonPass < Wagon
+  include Validation
+
   PASS_TYPE = :pass
   SEAT_RESERVED = 'Seat reserved!'
   WAGON_FULL = 'Wagon is full!'
   attr_reader :seats, :reserved_seats
+
+  validate :seats, :presence
+  validate :seats, :type, Integer
 
   def initialize(seats)
     @type = PASS_TYPE
@@ -29,10 +34,4 @@ class WagonPass < Wagon
   private
 
   attr_writer :reserved_seats
-
-  def validate!
-    super
-    raise ArgumentError, "ERROR: Seats can't be nil" if seats.nil?
-    raise ArgumentError, 'ERROR: Seats should be at least 1' if seats < 1
-  end
 end

@@ -2,7 +2,8 @@
 
 class Train
   include InstanceCounter
-  include Vendor
+  include Validation
+  extend Accessors
 
   @all ||= []
 
@@ -15,7 +16,13 @@ class Train
   end
 
   TRAIN_TYPES = %i[cargo pass].freeze
-  attr_reader :number, :type, :speed, :wagons, :route, :station, :station_number
+  attr_reader :type, :speed, :wagons, :route, :station, :station_number
+
+  strong_attr_accessor :name, String
+
+  validate :number, :presence
+  validate :number, :format, /^\p{Alnum}{3}-?\p{Alnum}{2}$/i
+  validate :type, :presence
 
   def initialize(number, type = nil)
     @number = number
@@ -77,13 +84,6 @@ class Train
     route.stations[station_number - 1]
   end
 
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
-  end
-
   def each_wagon(&block)
     wagons.each_with_index(&block)
     nil
@@ -93,7 +93,6 @@ class Train
 
   START_STATION_NUMBER = 0
   DEFAULT_ADDITIONAL_SPEED = 10
-  NUMBER_FORMAT = /^\p{Alnum}{3}-?\p{Alnum}{2}$/i.freeze
   attr_writer :speed, :station, :station_number
 
   def speed_up!(additional_speed)
@@ -128,14 +127,5 @@ class Train
     station&.send_train(self)
     self.station = route.stations[station_number]
     station.take_train(self)
-  end
-
-  def validate!
-    raise ArgumentError, "ERROR: Number can't be nil" if number.nil?
-    raise ArgumentError, 'ERROR: Number should be at least 5 symbols' if number.to_s.length < 5
-    raise ArgumentError, 'ERROR: Number should have format: xxx-xx OR xxxxx' if number !~ NUMBER_FORMAT
-
-    raise ArgumentError, "ERROR: Type can't be nil" if type.nil?
-    raise ArgumentError, 'ERROR: Type should be cargo OR passenger' unless TRAIN_TYPES.include?(type)
   end
 end

@@ -2,6 +2,8 @@
 
 class Station
   include InstanceCounter
+  include Validation
+  extend Accessors
 
   @all = []
 
@@ -9,7 +11,12 @@ class Station
     attr_reader :all
   end
 
-  attr_reader :name, :trains
+  attr_reader :trains
+
+  strong_attr_accessor :name, String
+
+  validate :name, :presence
+  validate :name, :type, String
 
   def initialize(name)
     @name = name
@@ -38,19 +45,7 @@ class Station
     send_train!(train) if trains.include?(train)
   end
 
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
-  end
-
   private
-
-  def validate!
-    raise ArgumentError, "ERROR: Name can't be nil" if name.nil?
-    raise ArgumentError, 'ERROR: Name should be at least 3 symbols' if name.length < 3
-  end
 
   def particular_trains(type)
     trains.select { |train| train.type == type }

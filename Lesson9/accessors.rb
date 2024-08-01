@@ -20,7 +20,7 @@ module Accessors
 
     define_method(arg) { instance_variable_get(var_name) }
     define_method("#{arg}=".to_sym) do |value|
-      raise ArgumentError, "Type must be #{struct}" if value.class != struct
+      raise ArgumentError, "ERROR: Type must be #{struct}" if value.class != struct
 
       instance_variable_set(var_name, value)
     end
